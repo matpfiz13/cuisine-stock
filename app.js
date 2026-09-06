@@ -233,7 +233,7 @@ function renderHome(){
   const possible=availableRecipeNames().filter(n=>recipeAvailability(n).possible).slice(0,3);
   return `
     <section class="hero">
-      <div class="kicker">CookFlow · V2.4</div>
+      <div class="kicker">CookFlow</div>
       <h2>Ton stock décide de ce que tu peux cuisiner.</h2>
       <p>Planifie tes repas, trouve les recettes réalisables et achète uniquement ce qui manque. Une fois les courses terminées, le stock se met à jour en un seul geste.</p>
       <div class="hero-actions"><button class="btn hero-btn" id="scanHomeBtn">📷 Scanner un produit</button><button class="btn hero-btn" data-go="week">Planifier</button></div>
