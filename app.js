@@ -234,10 +234,10 @@ function renderHome(){
       <div class="hero-actions"><button class="btn hero-btn" id="scanHomeBtn">📷 Scanner un produit</button><button class="btn hero-btn" data-go="week">Planifier</button></div>
     </section>
     <section class="grid-2">
-      <div class="stat-card"><div class="stat-icon">▦</div><div class="stat-value">${s.planned}</div><div class="stat-label">repas planifiés</div></div>
+      <div class="stat-card"><div class="stat-icon">📅</div><div class="stat-value">${s.planned}</div><div class="stat-label">repas planifiés</div></div>
       <div class="stat-card"><div class="stat-icon">🍳</div><div class="stat-value">${availableRecipeNames().filter(n=>recipeAvailability(n).possible).length}</div><div class="stat-label">recettes faisables maintenant</div></div>
-      <div class="stat-card"><div class="stat-icon">◫</div><div class="stat-value">${s.toBuy}</div><div class="stat-label">produits réellement manquants</div></div>
-      <div class="stat-card"><div class="stat-icon">!</div><div class="stat-value">${s.low}</div><div class="stat-label">stocks sous le minimum</div></div>
+      <div class="stat-card"><div class="stat-icon">⚠️</div><div class="stat-value">${s.toBuy}</div><div class="stat-label">produits réellement manquants</div></div>
+      <div class="stat-card"><div class="stat-icon">📉</div><div class="stat-value">${s.low}</div><div class="stat-label">stocks sous le minimum</div></div>
     </section>
     <section class="section">
       <div class="section-head"><div><h2>${focusLabel}</h2><p>${prettyDate(addDays(state.weekStart,focusIndex),{weekday:'long',day:'numeric',month:'long'})}</p></div><button class="btn small secondary" data-go="week">Modifier</button></div>
