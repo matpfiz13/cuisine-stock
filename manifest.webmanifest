@@ -1,7 +1,7 @@
 {
   "name": "Cuisine Stock",
   "short_name": "CuisineStock",
-  "description": "Menus de la semaine, recettes, stocks et liste de courses automatique.",
+  "description": "Menus, recettes réalisables avec le stock, scan code-barres et liste de courses basée sur le manque réel.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
@@ -9,7 +9,18 @@
   "theme_color": "#f7f5ef",
   "lang": "fr-FR",
   "icons": [
-    {"src":"icons/icon-192.png","sizes":"192x192","type":"image/png","purpose":"any maskable"},
-    {"src":"icons/icon-512.png","sizes":"512x512","type":"image/png","purpose":"any maskable"}
-  ]
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "id": "./"
 }

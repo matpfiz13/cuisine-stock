@@ -1,31 +1,20 @@
-CUISINE STOCK — PWA iPhone
-==========================
+CUISINE STOCK — V2.1
 
-CONTENU
-- index.html : application
-- styles.css : design mobile
-- app.js : menus, recettes, stocks, courses et sauvegarde locale
-- manifest.webmanifest : installation comme app
-- sw.js : fonctionnement hors ligne après première ouverture
-- icons/ : icônes de l'application
+Nouveautés :
+- Scan code-barres depuis l’écran Stocks et l’accueil.
+- Recherche produit via Open Food Facts.
+- Mémorisation code-barres → produit de stock.
+- Recettes classées selon leur disponibilité réelle.
+- Filtres : faisables maintenant / manque 1 ingrédient.
+- Ajout rapide d’une recette au menu.
+- Liste de courses = uniquement le manque réel pour les repas prévus.
+- Bouton « Courses faites » : ajoute automatiquement toutes les quantités prévues au stock en une seule action.
+- Stock minimum conservé comme alerte, sans ajout automatique aux courses.
 
-INSTALLATION SUR IPHONE
-1. Mettre le dossier sur un hébergement HTTPS (GitHub Pages, Netlify, serveur web personnel, etc.).
-2. Ouvrir l'adresse avec Safari sur l'iPhone.
-3. Partager > Sur l'écran d'accueil.
-4. Activer "Ouvrir comme app web".
-5. Ajouter.
+Installation :
+Héberger le contenu de ce dossier à la racine de GitHub Pages.
+Sur iPhone : Safari > Partager > Sur l’écran d’accueil.
 
-DONNÉES
-- Les données sont enregistrées localement dans le navigateur/app via localStorage.
-- Utiliser le menu ••• > Exporter pour créer une sauvegarde JSON.
-- Le menu Importer restaure cette sauvegarde.
-
-LOGIQUE DES STOCKS
-- Planifier un repas = besoin futur uniquement.
-- Activer "Mangé" = consommation réelle déduite du stock.
-- Courses = besoins futurs + stock minimum - stock réel.
-- Bouton "Acheté" = quantité de courses ajoutée automatiquement au stock.
-
-VERSION
-V1.0 — base issue de Gestion_Cuisine_Stocks_V1.xlsx
+Note scan :
+Le scanner sert à identifier ou ajouter ponctuellement un produit au stock. Il n’est pas nécessaire au retour des courses : utilise simplement le bouton « Courses faites » pour mettre à jour les stocks.
+Le scanner utilise ZXing chargé depuis un CDN. Une connexion internet est donc nécessaire pour le premier chargement du scanner et pour rechercher un produit dans Open Food Facts.
