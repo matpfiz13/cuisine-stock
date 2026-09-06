@@ -123,6 +123,11 @@ function ensureIngredientStocks(){
     if(!state.stocks[product]) state.stocks[product]=['Autre',unit||'unité',0,0];
   }));
 }
+function setActualStock(product, actualQty){
+  if(!state.stocks[product]) return;
+  const consumed = usageByStatus('consumed');
+  state.stocks[product][2] = Math.max(0,(consumed[product]||0) + Math.max(0,Number(actualQty)||0));
+}
 
 function actualStockMap(){
   return Object.fromEntries(stockRows().map(r=>[r.product,r]));
@@ -213,7 +218,7 @@ function navTo(screen){
 }
 function render(){
   const titles={home:'Accueil',week:'Semaine',stocks:'Stocks',recipes:'Recettes',shopping:'Courses'};
-  screenTitle.textContent=titles[activeScreen]||'Cuisine Stock';
+  screenTitle.textContent=titles[activeScreen]||'CookFlow';
   content.innerHTML = activeScreen==='home' ? renderHome() : activeScreen==='week' ? renderWeek() : activeScreen==='stocks' ? renderStocks() : activeScreen==='recipes' ? renderRecipes() : renderShopping();
   bindScreenEvents();
 }
@@ -228,7 +233,7 @@ function renderHome(){
   const possible=availableRecipeNames().filter(n=>recipeAvailability(n).possible).slice(0,3);
   return `
     <section class="hero">
-      <div class="kicker">Cuisine Stock · V2</div>
+      <div class="kicker">CookFlow · V2.4</div>
       <h2>Ton stock décide de ce que tu peux cuisiner.</h2>
       <p>Planifie tes repas, trouve les recettes réalisables et achète uniquement ce qui manque. Une fois les courses terminées, le stock se met à jour en un seul geste.</p>
       <div class="hero-actions"><button class="btn hero-btn" id="scanHomeBtn">📷 Scanner un produit</button><button class="btn hero-btn" data-go="week">Planifier</button></div>
@@ -282,7 +287,7 @@ function renderStocks(){
       <div><div class="stock-title">${esc(r.product)}</div><div class="stock-meta">${esc(r.category)} · ${esc(r.unit)}</div>
       <div class="stock-numbers"><div class="stock-num"><small>Réel</small><strong>${fmtQty(r.actual)} ${esc(r.unit)}</strong></div><div class="stock-num"><small>Après menus</small><strong>${fmtQty(r.projected)}</strong></div><div class="stock-num"><small>Mini</small><strong>${fmtQty(r.min)}</strong></div></div>
       <div class="progress"><span class="${stockClass(r)==='danger'?'critical':stockClass(r)==='warn'?'low':''}" style="width:${stockProgress(r)}%"></span></div></div>
-      <div class="stock-actions"><button class="round-btn" data-stock-add="${esc(r.product)}" aria-label="Ajouter du stock">+</button><button class="round-btn" data-stock-edit="${esc(r.product)}" aria-label="Modifier">⋯</button></div>
+      <div class="stock-side"><div class="stock-actions"><button class="round-btn" data-stock-add="${esc(r.product)}" aria-label="Ajouter du stock">+</button><button class="round-btn" data-stock-edit="${esc(r.product)}" aria-label="Modifier">⋯</button></div><div class="quick-stock-actions"><button class="btn small secondary" data-stock-low="${esc(r.product)}">🟠 Bientôt vide</button><button class="btn small danger" data-stock-empty="${esc(r.product)}">🔴 Je n’en ai plus</button></div></div>
     </article>`).join(''):`<div class="empty"><div class="emoji">⌕</div><strong>Aucun produit</strong>Essaie une autre recherche.</div>`}
     <button class="fab" id="addStockBtn" aria-label="Ajouter un produit">+</button>`;
 }
@@ -344,6 +349,8 @@ function bindStocks(){
   document.querySelectorAll('[data-filter]').forEach(b=>b.addEventListener('click',()=>{stockFilter=b.dataset.filter;render();}));
   document.querySelectorAll('[data-stock-add]').forEach(b=>b.addEventListener('click',()=>stockAddModal(b.dataset.stockAdd)));
   document.querySelectorAll('[data-stock-edit]').forEach(b=>b.addEventListener('click',()=>stockEditModal(b.dataset.stockEdit)));
+  document.querySelectorAll('[data-stock-low]').forEach(b=>b.addEventListener('click',()=>stockLowModal(b.dataset.stockLow)));
+  document.querySelectorAll('[data-stock-empty]').forEach(b=>b.addEventListener('click',()=>stockEmptyModal(b.dataset.stockEmpty)));
   document.getElementById('addStockBtn').addEventListener('click',()=>stockEditModal(''));
   const scan=document.getElementById('scanStockBtn'); if(scan) scan.addEventListener('click',openScannerModal);
 }
@@ -440,7 +447,7 @@ function showBarcodeProduct(code,product,mapped=null,unknown=false){
   openModal('Produit scanné',`<div class="barcode-result"><div class="barcode-icon">▥</div><div><strong>${esc(label)}</strong><small>${brand?esc(brand)+' · ':''}${esc(product.quantity||code)}</small></div></div>
     ${unknown?'<div class="notice warn">Ce code n’a pas été trouvé dans Open Food Facts. Tu peux tout de même l’associer à un produit de ton stock.</div>':''}
     <div class="field"><label>Associer au produit du stock</label><select class="select" id="barcodeStockProduct"><option value="">Créer un nouveau produit…</option>${stockOptions}</select></div>
-    <div id="barcodeNewProductFields" class="${defaultStock?'hidden':''}"><div class="field"><label>Nouveau produit</label><input id="barcodeNewName" type="text" value="${unknown?'':esc(label)}" placeholder="Nom dans Cuisine Stock"></div><div class="form-grid"><div class="field"><label>Catégorie</label><input id="barcodeCategory" type="text" value="${esc(guessCategory(`${label} ${product.categories||''}`))}"></div><div class="field"><label>Unité</label><input id="barcodeUnit" type="text" value="${esc(pack.unit)}"></div></div></div>
+    <div id="barcodeNewProductFields" class="${defaultStock?'hidden':''}"><div class="field"><label>Nouveau produit</label><input id="barcodeNewName" type="text" value="${unknown?'':esc(label)}" placeholder="Nom dans CookFlow"></div><div class="form-grid"><div class="field"><label>Catégorie</label><input id="barcodeCategory" type="text" value="${esc(guessCategory(`${label} ${product.categories||''}`))}"></div><div class="field"><label>Unité</label><input id="barcodeUnit" type="text" value="${esc(pack.unit)}"></div></div></div>
     <div class="form-grid"><div class="field"><label>Quantité par article</label><input id="barcodePackQty" type="number" inputmode="decimal" min="0" step="any" value="${mapped?.packageQty||pack.qty}"></div><div class="field"><label>Nombre d’articles</label><input id="barcodeCount" type="number" inputmode="numeric" min="1" step="1" value="1"></div></div>
     <div class="notice">Exemple : paquet de 500 g × 2 → <strong>1000 g</strong> ajoutés au stock.</div>
     <div class="modal-actions"><button class="btn secondary" id="rescanBtn">Rescanner</button><button class="btn" id="confirmBarcodeBtn" data-code="${esc(code)}" data-label="${esc(label)}" data-brand="${esc(brand)}">Ajouter au stock</button></div>`);
@@ -468,7 +475,7 @@ function confirmBarcode(button){
 }
 function showRecipeMissing(name){
   const a=recipeAvailability(name);
-  openModal(`Manque · ${name}`,a.missing.length?`<div class="notice">Pour réaliser cette recette avec le stock actuel :</div><div class="card">${a.missing.map(i=>`<div class="meal-mini"><div><strong>${esc(i.product)}</strong><small>Stock ${fmtQty(i.have)} / besoin ${fmtQty(i.needed)} ${esc(i.unit)}</small></div><span class="badge warn">+${fmtQty(i.missing)} ${esc(i.unit)}</span></div>`).join('')}</div>`:`<div class="empty"><div class="emoji">✓</div><strong>Tout est disponible</strong>Cette recette est réalisable maintenant.</div>`);
+  openModal(`Manque · ${name}`,a.missing.length?`<div class="notice">Pour réaliser cette recette avec le stock actuel :</div><div class="card">${a.missing.map(i=>`<div class="meal-mini quick-fix-row"><div><strong>${esc(i.product)}</strong><small>Stock ${fmtQty(i.have)} / besoin ${fmtQty(i.needed)} ${esc(i.unit)}</small></div><div class="quick-fix-actions"><span class="badge warn">+${fmtQty(i.missing)} ${esc(i.unit)}</span><button class="btn small danger" data-stock-empty="${esc(i.product)}">Je n’en ai plus</button></div></div>`).join('')}</div>`:`<div class="empty"><div class="emoji">✓</div><strong>Tout est disponible</strong>Cette recette est réalisable maintenant.</div>`);
 }
 function planRecipeModal(name){
   const choices=[];
@@ -484,6 +491,15 @@ function stockAddModal(product){
 function stockEditModal(product){
   const existing=product?state.stocks[product]:['Autre','unité',0,0];
   openModal(product?'Modifier le produit':'Nouveau produit',`<div class="field"><label>Produit</label><input id="stockName" type="text" value="${esc(product)}" ${product?'readonly':''}></div><div class="form-grid"><div class="field"><label>Catégorie</label><input id="stockCategory" type="text" value="${esc(existing[0])}"></div><div class="field"><label>Unité</label><input id="stockUnit" type="text" value="${esc(existing[1])}"></div></div><div class="form-grid"><div class="field"><label>Stock de référence</label><input id="stockBase" type="number" step="any" value="${existing[2]}"></div><div class="field"><label>Stock minimum</label><input id="stockMin" type="number" step="any" value="${existing[3]}"></div></div><div class="modal-actions">${product?'<button class="btn danger" id="deleteStockBtn">Supprimer</button>':'<button class="btn secondary" id="cancelStockEdit">Annuler</button>'}<button class="btn" id="saveStockBtn">Enregistrer</button></div>`);
+}
+function stockEmptyModal(product){
+  const row=stockRows().find(r=>r.product===product); if(!row)return;
+  openModal(`Je n’en ai plus · ${product}`,`<div class="notice warn"><strong>Confirmation :</strong> le stock réel de <strong>${esc(product)}</strong> sera mis à 0. La liste de courses sera recalculée automatiquement.</div><div class="card"><div class="meal-mini"><div><strong>Stock actuel</strong><small>${fmtQty(row.actual)} ${esc(row.unit)} disponibles</small></div><span class="badge danger">→ 0 ${esc(row.unit)}</span></div></div><div class="modal-actions"><button class="btn secondary" id="cancelQuickStock">Annuler</button><button class="btn danger" id="confirmStockEmpty" data-product="${esc(product)}">🔴 Confirmer</button></div>`);
+}
+function stockLowModal(product){
+  const row=stockRows().find(r=>r.product===product); if(!row)return;
+  const suggested = row.actual>1 ? 1 : Math.max(0,row.actual);
+  openModal(`Bientôt vide · ${product}`,`<div class="notice">Renseigne rapidement la quantité qu’il te reste réellement. Cela évite de modifier le stock complet à la main.</div><div class="field"><label>Quantité restante estimée (${esc(row.unit)})</label><input id="quickRemainingQty" type="number" inputmode="decimal" min="0" step="any" value="${fmtQty(suggested)}"></div><div class="card"><div class="meal-mini"><div><strong>Stock actuel</strong><small>${fmtQty(row.actual)} ${esc(row.unit)} disponibles</small></div><span class="badge warn">Ajustement rapide</span></div></div><div class="modal-actions"><button class="btn secondary" id="cancelQuickStock">Annuler</button><button class="btn" id="confirmStockLow" data-product="${esc(product)}">🟠 Enregistrer</button></div>`);
 }
 function buyProduct(product){
   const row=stockRows().find(r=>r.product===product); if(!row||row.buy<=0)return;
@@ -504,13 +520,13 @@ function collectRecipeIngredients(){
 }
 
 function showInstallHelp(){
-  openModal('Installer sur l’iPhone',`<div class="notice"><strong>Une fois la PWA mise en ligne en HTTPS</strong>, elle peut s’ouvrir en plein écran comme une app et fonctionner hors ligne après la première ouverture.</div><ol class="install-steps"><li>Ouvre l’adresse de l’appli dans <strong>Safari</strong>.</li><li>Touche <strong>Partager</strong> puis <strong>Sur l’écran d’accueil</strong>.</li><li>Active <strong>Ouvrir comme app web</strong>.</li><li>Touche <strong>Ajouter</strong>. L’icône Cuisine Stock apparaît sur l’écran d’accueil.</li></ol>`);
+  openModal('Installer sur l’iPhone',`<div class="notice"><strong>Une fois la PWA mise en ligne en HTTPS</strong>, elle peut s’ouvrir en plein écran comme une app et fonctionner hors ligne après la première ouverture.</div><ol class="install-steps"><li>Ouvre l’adresse de l’appli dans <strong>Safari</strong>.</li><li>Touche <strong>Partager</strong> puis <strong>Sur l’écran d’accueil</strong>.</li><li>Active <strong>Ouvrir comme app web</strong>.</li><li>Touche <strong>Ajouter</strong>. L’icône CookFlow apparaît sur l’écran d’accueil.</li></ol>`);
 }
 function showSettings(){
   openModal('Données & réglages',`<div class="settings-list"><div class="settings-row"><div><strong>Exporter une sauvegarde</strong><small>Télécharge menus, recettes et stocks dans un fichier JSON.</small></div><button class="btn small secondary" id="exportBtn">Exporter</button></div><div class="settings-row"><div><strong>Restaurer une sauvegarde</strong><small>Réimporte un fichier JSON précédemment exporté.</small></div><button class="btn small secondary" id="importBtn">Importer</button></div><div class="settings-row"><div><strong>Installation iPhone</strong><small>Afficher les étapes pour l’ajouter à l’écran d’accueil.</small></div><button class="btn small secondary" id="installSettingsBtn">Voir</button></div><div class="settings-row"><div><strong>Réinitialiser la démo</strong><small>Remet les menus et stocks de la première version Excel.</small></div><button class="btn small danger" id="resetBtn">Réinitialiser</button></div></div>`);
 }
 function exportData(){
-  const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=`cuisine-stock-${new Date().toISOString().slice(0,10)}.json`; a.click(); setTimeout(()=>URL.revokeObjectURL(a.href),1000); showToast('Sauvegarde exportée');
+  const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=`cookflow-${new Date().toISOString().slice(0,10)}.json`; a.click(); setTimeout(()=>URL.revokeObjectURL(a.href),1000); showToast('Sauvegarde exportée');
 }
 
 // Global navigation / modal actions
@@ -521,11 +537,23 @@ document.getElementById('closeModalBtn').addEventListener('click',closeModal);
 modal.addEventListener('click',e=>{if(e.target===modal)closeModal();});
 
 modalBody.addEventListener('click',e=>{
-  if(e.target.id==='cancelGroceriesDone') closeModal();
+  if(e.target.id==='cancelGroceriesDone' || e.target.id==='cancelQuickStock') closeModal();
+  if(e.target.dataset?.stockEmpty){ stockEmptyModal(e.target.dataset.stockEmpty); return; }
   if(e.target.id==='confirmGroceriesDone'){
     const rows=stockRows().filter(r=>r.buy>0.0001);
     rows.forEach(r=>{ if(state.stocks[r.product]) state.stocks[r.product][2]+=r.buy; });
     saveState(); closeModal(); render(); showToast('✅ Courses ajoutées au stock');
+  }
+  if(e.target.id==='confirmStockEmpty'){
+    const product=e.target.dataset.product;
+    setActualStock(product,0);
+    saveState(); closeModal(); render(); showToast(`${product} mis à 0`);
+  }
+  if(e.target.id==='confirmStockLow'){
+    const product=e.target.dataset.product;
+    const qty=Math.max(0,Number(document.getElementById('quickRemainingQty').value)||0);
+    setActualStock(product,qty);
+    saveState(); closeModal(); render(); showToast(`Stock ajusté · ${product}`);
   }
   if(e.target.id==='cancelScanner'||e.target.id==='cancelPlanRecipe') closeModal();
   if(e.target.id==='lookupBarcodeBtn') lookupBarcode(document.getElementById('manualBarcode')?.value||'');
@@ -571,7 +599,7 @@ modalBody.addEventListener('click',e=>{
   if(e.target.id==='importBtn') importFile.click();
   if(e.target.id==='installSettingsBtn'){closeModal();setTimeout(showInstallHelp,100);}
   if(e.target.id==='resetBtn'){
-    state=clone(seedState);state.version=2;state.barcodes={};saveState();closeModal();render();showToast('Données de démonstration restaurées');
+    state=clone(seedState);state=clone(seedState);state.version=2;state.barcodes={};saveState();closeModal();render();showToast('Données de démonstration restaurées');
   }
 });
 

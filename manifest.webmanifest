@@ -1,6 +1,6 @@
 {
-  "name": "Cuisine Stock",
-  "short_name": "CuisineStock",
+  "name": "CookFlow",
+  "short_name": "CookFlow",
   "description": "Menus, recettes réalisables avec le stock, scan code-barres et liste de courses basée sur le manque réel.",
   "start_url": "./index.html",
   "scope": "./",

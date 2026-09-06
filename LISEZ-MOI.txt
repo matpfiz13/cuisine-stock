@@ -23,3 +23,6 @@ Le scanner utilise ZXing chargé depuis un CDN. Une connexion internet est donc 
 V2.2
 - Ajout de deux raccourcis dans l'écran Courses : Ouvrir Jow et Ouvrir E.Leclerc Drive.
 - Les boutons ouvrent les sites officiels dans un nouvel onglet/contexte iOS.
+
+
+V2.3 : ajout des raccourcis stock '🟠 Bientôt vide' et '🔴 Je n’en ai plus'.

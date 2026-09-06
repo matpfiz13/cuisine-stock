@@ -95,3 +95,12 @@ h2,h3,p{margin-top:0}
 
 /* Cuisine Stock V2.2 — raccourcis courses */
 .shopping-services{margin:18px 0 20px}.service-buttons{display:grid;gap:10px}.service-btn{text-decoration:none;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:21px;padding:14px;display:grid;grid-template-columns:48px 1fr auto;gap:12px;align-items:center;box-shadow:0 5px 20px rgba(42,53,46,.025)}.service-btn:active{transform:scale(.99)}.service-icon{width:48px;height:48px;border-radius:16px;display:grid;place-items:center;font-size:24px}.jow-btn .service-icon{background:#e8f4e8}.leclerc-btn .service-icon{background:#eaf1fb}.service-btn strong{display:block;font-size:15px}.service-btn small{display:block;color:var(--muted);font-size:12px;margin-top:3px}.service-arrow{font-size:28px;color:var(--muted);line-height:1}
+
+
+/* Cuisine Stock V2.3 — raccourcis stock */
+.stock-side{display:flex;flex-direction:column;gap:10px;align-items:flex-end}
+.quick-stock-actions{display:flex;flex-direction:column;gap:7px;align-items:stretch;min-width:142px}
+.quick-stock-actions .btn{justify-content:flex-start}
+.quick-fix-row{align-items:flex-start}
+.quick-fix-actions{display:flex;flex-direction:column;align-items:flex-end;gap:8px}
+@media(max-width:520px){.stock-card{grid-template-columns:1fr}.stock-side{align-items:stretch}.stock-actions{justify-content:flex-end}.quick-stock-actions{min-width:0}}
