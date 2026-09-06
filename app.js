@@ -234,10 +234,10 @@ function renderHome(){
       <div class="hero-actions"><button class="btn hero-btn" id="scanHomeBtn">📷 Scanner un produit</button><button class="btn hero-btn" data-go="week">Planifier</button></div>
     </section>
     <section class="grid-2">
-      <div class="stat-card"><div class="stat-icon">📅</div><div class="stat-value">${s.planned}</div><div class="stat-label">repas planifiés</div></div>
+      <div class="stat-card"><div class="stat-icon">▦</div><div class="stat-value">${s.planned}</div><div class="stat-label">repas planifiés</div></div>
       <div class="stat-card"><div class="stat-icon">🍳</div><div class="stat-value">${availableRecipeNames().filter(n=>recipeAvailability(n).possible).length}</div><div class="stat-label">recettes faisables maintenant</div></div>
-      <div class="stat-card"><div class="stat-icon">⚠️</div><div class="stat-value">${s.toBuy}</div><div class="stat-label">produits réellement manquants</div></div>
-      <div class="stat-card"><div class="stat-icon">📉</div><div class="stat-value">${s.low}</div><div class="stat-label">stocks sous le minimum</div></div>
+      <div class="stat-card"><div class="stat-icon">◫</div><div class="stat-value">${s.toBuy}</div><div class="stat-label">produits réellement manquants</div></div>
+      <div class="stat-card"><div class="stat-icon">!</div><div class="stat-value">${s.low}</div><div class="stat-label">stocks sous le minimum</div></div>
     </section>
     <section class="section">
       <div class="section-head"><div><h2>${focusLabel}</h2><p>${prettyDate(addDays(state.weekStart,focusIndex),{weekday:'long',day:'numeric',month:'long'})}</p></div><button class="btn small secondary" data-go="week">Modifier</button></div>
@@ -307,6 +307,13 @@ function renderShopping(){
   const totalItems=rows.length;
   return `<div class="notice"><strong>Mode “manque réel” :</strong> la liste contient uniquement ce qu’il faut acheter pour couvrir les repas encore prévus. La réserve minimum n’est plus ajoutée automatiquement.</div>
     ${rows.length?`<div class="action-strip shopping-done-strip"><button class="btn full groceries-done-btn" id="groceriesDoneBtn">✅ Courses faites</button><div class="action-hint">Ajoute en une fois au stock toutes les quantités prévues dans cette liste.</div></div>`:''}
+    <section class="shopping-services">
+      <div class="section-head"><div><h2>Commander mes courses</h2><p>Ouvre directement ton service habituel</p></div></div>
+      <div class="service-buttons">
+        <a class="service-btn jow-btn" href="https://jow.fr/" target="_blank" rel="noopener noreferrer"><span class="service-icon">🥕</span><span><strong>Ouvrir Jow</strong><small>Recettes & panier</small></span><span class="service-arrow">›</span></a>
+        <a class="service-btn leclerc-btn" href="https://www.leclercdrive.fr/" target="_blank" rel="noopener noreferrer"><span class="service-icon">🛒</span><span><strong>Ouvrir E.Leclerc Drive</strong><small>Commander le Drive</small></span><span class="service-arrow">›</span></a>
+      </div>
+    </section>
     <div class="section-head"><div><h2>${totalItems} produit${totalItems>1?'s':''}</h2><p>Besoin des menus − stock disponible</p></div></div>
     ${rows.length?rows.map(r=>`<article class="shopping-card"><div><strong>${esc(r.product)}</strong><small>${esc(r.category)} · besoin ${fmtQty(r.need)} · stock ${fmtQty(r.actual)} ${esc(r.unit)}</small></div><div><div class="shopping-qty">${fmtQty(r.buy)} ${esc(r.unit)}</div></div></article>`).join(''):`<div class="empty"><div class="emoji">✓</div><strong>Liste vide</strong>Tu as déjà tout ce qu’il faut pour les menus planifiés.</div>`}
     ${reserveRows.length?`<section class="section"><div class="section-head"><div><h2>⚠️ Réserve basse</h2><p>Information seulement, non ajoutée aux courses</p></div></div><div class="card">${reserveRows.slice(0,8).map(r=>`<div class="meal-mini"><div><strong>${esc(r.product)}</strong><small>Mini souhaité ${fmtQty(r.min)} ${esc(r.unit)}</small></div><span class="badge warn">+${fmtQty(r.reserveBuy-r.buy)} conseillé</span></div>`).join('')}</div></section>`:''}`;

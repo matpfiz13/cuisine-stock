@@ -18,3 +18,8 @@ Sur iPhone : Safari > Partager > Sur l’écran d’accueil.
 Note scan :
 Le scanner sert à identifier ou ajouter ponctuellement un produit au stock. Il n’est pas nécessaire au retour des courses : utilise simplement le bouton « Courses faites » pour mettre à jour les stocks.
 Le scanner utilise ZXing chargé depuis un CDN. Une connexion internet est donc nécessaire pour le premier chargement du scanner et pour rechercher un produit dans Open Food Facts.
+
+
+V2.2
+- Ajout de deux raccourcis dans l'écran Courses : Ouvrir Jow et Ouvrir E.Leclerc Drive.
+- Les boutons ouvrent les sites officiels dans un nouvel onglet/contexte iOS.
