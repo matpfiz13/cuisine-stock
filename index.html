@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+  <meta name="theme-color" content="#f7f5ef">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Cuisine Stock">
+  <meta name="format-detection" content="telephone=no">
+  <title>Cuisine Stock</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="icons/icon-180.png">
+  <link rel="icon" href="icons/icon-192.png">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="app" class="app-shell">
+    <header class="topbar">
+      <div>
+        <div class="eyebrow">Cuisine & maison</div>
+        <h1 id="screenTitle">Accueil</h1>
+      </div>
+      <button class="icon-btn" id="settingsBtn" aria-label="Réglages">•••</button>
+    </header>
+
+    <main id="content" class="content" aria-live="polite"></main>
+
+    <nav class="bottom-nav" aria-label="Navigation principale">
+      <button data-screen="home" class="nav-item active"><span>⌂</span><small>Accueil</small></button>
+      <button data-screen="week" class="nav-item"><span>▦</span><small>Semaine</small></button>
+      <button data-screen="stocks" class="nav-item"><span>▣</span><small>Stocks</small></button>
+      <button data-screen="recipes" class="nav-item"><span>♨</span><small>Recettes</small></button>
+      <button data-screen="shopping" class="nav-item"><span>✓</span><small>Courses</small></button>
+    </nav>
+  </div>
+
+  <div id="modal" class="modal-backdrop hidden" role="dialog" aria-modal="true">
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <div class="modal-header">
+        <h2 id="modalTitle">Modifier</h2>
+        <button class="icon-btn" id="closeModalBtn" aria-label="Fermer">×</button>
+      </div>
+      <div id="modalBody" class="modal-body"></div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast hidden"></div>
+  <input id="importFile" type="file" accept="application/json,.json" hidden>
+  <script src="app.js"></script>
+</body>
+</html>

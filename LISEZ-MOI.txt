@@ -1,0 +1,31 @@
+CUISINE STOCK — PWA iPhone
+==========================
+
+CONTENU
+- index.html : application
+- styles.css : design mobile
+- app.js : menus, recettes, stocks, courses et sauvegarde locale
+- manifest.webmanifest : installation comme app
+- sw.js : fonctionnement hors ligne après première ouverture
+- icons/ : icônes de l'application
+
+INSTALLATION SUR IPHONE
+1. Mettre le dossier sur un hébergement HTTPS (GitHub Pages, Netlify, serveur web personnel, etc.).
+2. Ouvrir l'adresse avec Safari sur l'iPhone.
+3. Partager > Sur l'écran d'accueil.
+4. Activer "Ouvrir comme app web".
+5. Ajouter.
+
+DONNÉES
+- Les données sont enregistrées localement dans le navigateur/app via localStorage.
+- Utiliser le menu ••• > Exporter pour créer une sauvegarde JSON.
+- Le menu Importer restaure cette sauvegarde.
+
+LOGIQUE DES STOCKS
+- Planifier un repas = besoin futur uniquement.
+- Activer "Mangé" = consommation réelle déduite du stock.
+- Courses = besoins futurs + stock minimum - stock réel.
+- Bouton "Acheté" = quantité de courses ajoutée automatiquement au stock.
+
+VERSION
+V1.0 — base issue de Gestion_Cuisine_Stocks_V1.xlsx
